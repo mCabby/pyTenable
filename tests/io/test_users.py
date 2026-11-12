@@ -943,3 +943,60 @@ def test_users_list_with_roles_typeerror(tvm, value):
     with pytest.raises(TypeError):
         tvm.users.list(with_roles=value)
     assert len(responses.calls) == 0
+
+@responses.activate
+def test_users_roles(tvm):
+    user_uuid = 'e02cad91-e3a6-4608-9145-7d4ece06e928'
+    role_uuid = '7a26f80f-732c-4a2e-b962-d1d9b9511030'
+
+    responses.add(
+        responses.GET,
+        f'https://nourl/access-control/v1/users/{user_uuid}/roles',
+        json={
+            'container_uuid': '9b42306b-3ebb-451d-a250-0a1985509880',
+            'user_uuid': user_uuid,
+            'role_uuids': [
+                role_uuid,
+            ],
+        },
+    )
+
+    roles = tvm.users.roles(user_uuid)
+
+    assert isinstance(roles, dict)
+    assert roles['role_uuids'] == [role_uuid]
+
+
+@responses.activate
+def test_users_update_roles(tvm):
+    user_uuid = 'e02cad91-e3a6-4608-9145-7d4ece06e928'
+    role_uuid = '7a26f80f-732c-4a2e-b962-d1d9b9511030'
+
+    responses.add(
+        responses.PUT,
+        f'https://nourl/access-control/v1/users/{user_uuid}/roles',
+        json={
+            'container_uuid': '9b42306b-3ebb-451d-a250-0a1985509880',
+            'user_uuid': user_uuid,
+            'role_uuids': [
+                role_uuid,
+            ],
+        },
+        match=[
+            json_params_matcher(
+                {
+                    'role_uuids': [
+                        role_uuid,
+                    ]
+                }
+            )
+        ],
+    )
+
+    roles = tvm.users.update_roles(
+        user_uuid,
+        [role_uuid],
+    )
+
+    assert isinstance(roles, dict)
+    assert roles['role_uuids'] == [role_uuid]

@@ -33,6 +33,7 @@ Tenable Vulnerability Management
     policies
     recast_rules
     remediation_scans
+    roles
     scanner_groups
     scanners
     scans
@@ -74,6 +75,7 @@ from .plugins import PluginsAPI
 from .policies import PoliciesAPI
 from .recast_rules import RecastRulesAPI
 from .remediation_scans import RemediationScansAPI
+from .roles import RolesAPI
 from .scanner_groups import ScannerGroupsAPI
 from .scanners import ScannersAPI
 from .scans import ScansAPI
@@ -363,6 +365,14 @@ class TenableIO(APIPlatform):  # noqa: PLR0904
         :doc:`Tenable Vulnerability Management Recast Rules APIs <recast_rules>`.
         """
         return RecastRulesAPI(self)
+
+    @property
+    def roles(self):
+        """
+        The interface object for the
+        :doc:`Tenable Vulnerability Management Roles APIs <roles>`.
+        """
+        return RolesAPI(self)
 
     @property
     def scanner_groups(self):

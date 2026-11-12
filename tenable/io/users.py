@@ -14,6 +14,8 @@ Methods available on ``tio.users``:
 
 from tenable.io.base import TIOEndpoint
 from tenable.utils import dict_merge, scrub
+from typing import Dict, List
+from uuid import UUID
 
 
 class UsersAPI(TIOEndpoint):
@@ -466,3 +468,51 @@ class UsersAPI(TIOEndpoint):
             f'users/{scrub(user_id)}/authorizations',
             json=payload,
         )
+
+    def roles(self, user_uuid: UUID) -> Dict:
+        """
+        Retrieves the roles assigned to the specified user.
+
+        :devportal:`users: roles <access-control-users-role-list>`
+
+        Args:
+            user_uuid (str):
+                The UUID of the user whose roles to retrieve.
+
+        Returns:
+            :obj:`dict`:
+                The user role assignment record.
+
+        Examples:
+            >>> roles = tio.users.roles(
+            ...     'e02cad91-e3a6-4608-9145-7d4ece06e928'
+            ... )
+        """
+        return self._api.get(
+            f'access-control/v1/users/{scrub(user_uuid)}/roles'
+        ).json()
+
+    def update_roles(self, user_uuid: UUID, role_uuids: List[str]) -> Dict:
+        """
+        Updates the roles assigned to the specified user.
+
+        Args:
+            user_uuid (str):
+                The UUID of the user whose roles to update.
+            role_uuids (list):
+                The UUIDs of the roles to assign to the user.
+
+        Returns:
+            :obj:`dict`:
+                The updated user role assignment record.
+
+        Examples:
+            >>> roles = tio.users.update_roles(
+            ...     'e02cad91-e3a6-4608-9145-7d4ece06e928',
+            ...     ['7a26f80f-732c-4a2e-b962-d1d9b9511030'],
+            ... )
+        """
+        return self._api.put(
+            f'access-control/v1/users/{scrub(user_uuid)}/roles',
+            json={'role_uuids': role_uuids},
+        ).json()
